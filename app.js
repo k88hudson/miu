@@ -15,7 +15,6 @@ var app = express(),
     env = new habitat(),
     middleware = require( "./lib/middleware" ),
     nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname + '/views' )));
-    routes = require( "./routes" ),
     make = makeAPI.makeAPI({
       apiURL: env.get('MAKE_ENDPOINT'),
       auth: env.get('MAKE_AUTH')
@@ -24,7 +23,8 @@ var app = express(),
       key: env.get("S3_KEY"),
       secret: env.get("S3_SECRET"),
       bucket: env.get("S3_BUCKET")
-    });
+    }),
+    routes = require( "./routes" )(make);
 
 // Enable template rendering with nunjucks
 nunjucksEnv.express( app );
@@ -55,7 +55,7 @@ persona( app, {
 });
 
 // Express routes
-app.get( "/", routes.index );
+app.get( "/", routes.index);
 app.get( "/healthcheck", routes.api.healthcheck );
 app.put( "/upload",
   middleware.isAuthenticated,

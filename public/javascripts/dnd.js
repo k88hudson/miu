@@ -43,10 +43,7 @@
 
         console.log( "Done uploading %s", f.name );
         var li = document.createElement( "li" );
-        var img = document.createElement( "img" );
-        li.innerHTML = "<a href='" + url + "'>" + url + "</a><br>";
-        img.src = url;
-        li.appendChild(img);
+        li.innerHTML = '<a href="'+url+'"><img src="'+url+'"></a>';
         uploaded.appendChild(li);
       });
       xhr.open( "PUT", "/upload", false );

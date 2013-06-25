@@ -4,3 +4,17 @@
   padding: 25px;
   text-align: center;
 }
+
+.your-makes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.your-makes li {
+  padding: 0;
+  float: left;
+}
+
+.your-makes li img {
+  width: 200px;
+}

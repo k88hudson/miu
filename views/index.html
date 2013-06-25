@@ -15,8 +15,14 @@
     <label>Slug</label>
     <input placeholder="slug-here" class="slug">
     <div class="dnd">Drop your image here</div>
-    <ul class="uploaded">
+    <ul class="uploaded your-makes">
 
+    </ul>
+    <h2>Your makes:</h2>
+    <ul class="your-makes">
+      {% for make in makes %}
+        <li><a href="{{make.description}}"><img src="{{make.description}}"></a></li>
+      {% endfor %}
     </ul>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="javascripts/dnd.js"></script>
