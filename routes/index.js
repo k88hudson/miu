@@ -4,6 +4,9 @@ module.exports = function(make) {
   return {
     index: function( req, res ) {
       var makes;
+      if ( !req.session.email ) {
+        return res.render( "index.html", { email: req.session.email, makes: [] });
+      }
       make.find({ email: req.session.email }).sortByField("createdAt", "desc" ).then( function(err, data) {
         if ( err ) {
           makes = [];
