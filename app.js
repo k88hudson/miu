@@ -2,6 +2,7 @@
 var express = require( "express" ),
     habitat = require( "habitat" ),
     knox = require( "knox" ),
+    makeAPI = require('makeapi'),
     nunjucks = require( "nunjucks" ),
     path = require( "path" ),
     persona = require( "express-persona" );
@@ -15,6 +16,10 @@ var app = express(),
     middleware = require( "./lib/middleware" ),
     nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname + '/views' )));
     routes = require( "./routes" ),
+    make = makeAPI.makeAPI({
+      apiURL: env.get('MAKE_ENDPOINT'),
+      auth: env.get('MAKE_AUTH')
+    }),
     s3 = knox.createClient({
       key: env.get("S3_KEY"),
       secret: env.get("S3_SECRET"),
@@ -52,7 +57,12 @@ persona( app, {
 // Express routes
 app.get( "/", routes.index );
 app.get( "/healthcheck", routes.api.healthcheck );
-app.put( "/upload", middleware.isAuthenticated, middleware.uploadToS3( s3 ), routes.upload );
+app.put( "/upload",
+  middleware.isAuthenticated,
+  middleware.uploadToS3( s3 ),
+  middleware.addToMakeAPI( make, env.get( "MAKES_HOST" ) ),
+  routes.upload
+);
 
 // Start up the server
 app.listen( env.get( "PORT", 3000 ), function() {

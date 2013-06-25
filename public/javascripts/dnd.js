@@ -1,7 +1,8 @@
 (function() {
   var drop = document.querySelector( ".dnd" ),
       select = document.querySelector( ".select" ),
-      uploaded = document.querySelector( ".uploaded" );
+      uploaded = document.querySelector( ".uploaded" ),
+      slugInput = document.querySelector( ".slug" );
 
   drop.addEventListener( "dragover", function( event ) {
     event.stopPropagation();
@@ -19,30 +20,25 @@
     }
 
     files.forEach(function( f ) {
-      var xhr = new XMLHttpRequest();
-      var fd = new FormData();
-
-      fd.append( "image", f );
-
-      xhr.addEventListener( "progress", function( event ) {
-        if ( event.lengthComputable ) {
-          console.log( "%d%% complete", oEvent.loaded / oEvent.total * 100 );
+      $.ajax({
+        type: "PUT",
+        url: "/upload",
+        enctype: 'multipart/form-data',
+        data: {
+          image: f,
+          slug: encodeURIComponent(slugInput.value)
         }
-      });
-      xhr.addEventListener( "load", function() {
-        if (this.status != 200) {
-          return;
-        }
-
-        var url = JSON.parse( this.responseText ).url;
-
+      })
+      .done( function( data, status, xhr ) {
+        console.log( data, status, xhr );
         console.log( "Done uploading %s", f.name );
         var li = document.createElement( "li" );
         li.innerHTML = "<a href='" + url + "'>" + url + "</a>";
         uploaded.appendChild(li);
+      })
+      .fail( function( xhr, status, err ) {
+        console.log( xhr, status, err );
       });
-      xhr.open( "PUT", "/upload", false );
-      xhr.send( fd );
     });
 
   };
