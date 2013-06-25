@@ -20,25 +20,37 @@
     }
 
     files.forEach(function( f ) {
-      $.ajax({
-        type: "PUT",
-        url: "/upload",
-        enctype: 'multipart/form-data',
-        data: {
-          image: f,
-          slug: encodeURIComponent(slugInput.value)
+      var xhr = new XMLHttpRequest();
+      var fd = new FormData();
+
+      fd.append( "image", f );
+      fd.append( "slug", encodeURIComponent(slugInput.value));
+
+      xhr.addEventListener( "progress", function( event ) {
+        if ( event.lengthComputable ) {
+          console.log( "%d%% complete", oEvent.loaded / oEvent.total * 100 );
         }
-      })
-      .done( function( data, status, xhr ) {
-        console.log( data, status, xhr );
+      });
+      xhr.addEventListener( "load", function() {
+        var resp = JSON.parse( this.responseText );
+
+        if (this.status != 200) {
+          console.log( resp );
+          return;
+        }
+
+        var url = resp.url;
+
         console.log( "Done uploading %s", f.name );
         var li = document.createElement( "li" );
-        li.innerHTML = "<a href='" + url + "'>" + url + "</a>";
+        var img = document.createElement( "img" );
+        li.innerHTML = "<a href='" + url + "'>" + url + "</a><br>";
+        img.src = url;
+        li.appendChild(img);
         uploaded.appendChild(li);
-      })
-      .fail( function( xhr, status, err ) {
-        console.log( xhr, status, err );
       });
+      xhr.open( "PUT", "/upload", false );
+      xhr.send( fd );
     });
 
   };

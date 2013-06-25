@@ -5,7 +5,7 @@ module.exports = {
     res.render( "index.html", { email: req.session.email });
   },
   upload: function( req, res ) {
-    res.json({ url: req.s3Url, make: req.make });
+    res.json(200, { url: req.s3Url, make: req.make });
   },
   api: {
     healthcheck: require( "./api/healthcheck")
