@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jbuck/miu.git"
+    "url": "git://github.com/k88hudson/miu.git"
   },
   "author": "Jon Buckley <jon@jbuckley.ca>",
   "license": "Apache-2.0",
@@ -18,7 +18,7 @@
     "habitat": "0.4.1",
     "knox": "0.7.0",
     "nunjucks": "0.1.8a",
-    "makeapi": "~0.2.0",
+    "makeapi": "~0.2.0"
   },
   "devDependencies": {
     "grunt": "0.4.1",
