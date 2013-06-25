@@ -16,10 +16,9 @@ var app = express(),
     nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname + '/views' )));
     routes = require( "./routes" ),
     s3 = knox.createClient({
-      key: env.get("AWS_KEY"),
-      secret: env.get("AWS_SECRET"),
-      region: env.get("AWS_REGION"),
-      bucket: env.get("AWS_BUCKET")
+      key: env.get("S3_KEY"),
+      secret: env.get("S3_SECRET"),
+      bucket: env.get("S3_BUCKET")
     });
 
 // Enable template rendering with nunjucks
@@ -29,33 +28,25 @@ app.disable( "x-powered-by" );
 
 // Setup global middleware
 app.use( express.logger());
-// Always put the compression middleware high up in the chain
 app.use( express.compress());
 app.use( express.static( path.join( __dirname + "/public" )));
-// bodyParser will parse "application/json", "application/x-www-form-urlencoded" and "multipart/form-data"
-// requests and put the results on req.body and req.files. Handy!
-// If you don't need to handle all three types then just use json(), urlencoded() or multipart() instead.
 app.use( express.bodyParser());
-// cookieParser will parse "Cookie" headers, and cookieSession adds signed (not secret!) cookies.
-// The advantage is that the server doesn't need to look up data from the DB on every request.
-// The disadvantage is that any data saved into the cookie is visible to the user.
 app.use( express.cookieParser());
 app.use( express.cookieSession({
-  secret: env.get( "SECRET" ),
+  secret: env.get( "SESSION_SECRET" ),
   cookie: {
     maxAge: 2678400000 // 31 days. Persona saves session data for 1 month
   },
   proxy: true
 }));
-// Attempt to use Express' routes defined below
+
 app.use( app.router );
-// Whenever you pass `next( someError )`, this middleware will handle it
 app.use( middleware.errorHandler );
 
 // Add Persona authentication
 // Must be after app.use() calls, otherwise our middleware doesn't get executed!
 persona( app, {
-  audience: env.get( "HOSTNAME" )
+  audience: env.get( "PERSONA_AUDIENCE" )
 });
 
 // Express routes
