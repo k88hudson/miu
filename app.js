@@ -5,7 +5,8 @@ var express = require( "express" ),
     makeAPI = require('makeapi'),
     nunjucks = require( "nunjucks" ),
     path = require( "path" ),
-    persona = require( "express-persona" );
+    persona = require( "express-persona" ),
+    publishMakes = require( "publish-makes" );
 
 // Load config from ".env"
 habitat.load();
@@ -24,6 +25,7 @@ var app = express(),
       secret: env.get("S3_SECRET"),
       bucket: env.get("S3_BUCKET")
     }),
+    publisher = publishMakes( make, s3, "miu" ),
     routes = require( "./routes" )(make);
 
 // Enable template rendering with nunjucks
